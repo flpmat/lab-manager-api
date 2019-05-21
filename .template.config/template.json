@@ -1,0 +1,17 @@
+{
+  "$schema": "http://json.schemastore.org/template",
+  "author": "DIN-TCE",
+  "classifications": [  
+    "Common",
+    "Web API"
+  ],
+  "identity": "AuditoriaOperacionalApi",
+  "name": "AUDITORIA OPERACIONAL API",
+  "shortName": "auditoriaOperacionalApi",
+  "tags": {
+    "language": "C#",
+    "type": "project" 
+  },
+  "sourceName": "AuditoriaOperacionalApi",
+  "preferNameDirectory" : true
+}

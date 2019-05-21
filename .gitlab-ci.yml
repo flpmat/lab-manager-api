@@ -1,0 +1,16 @@
+# stages:
+#  - build
+ 
+# build_prd: 
+#  stage: build
+#  image: microsoft/dotnet:2.1-sdk-alpine
+#  tags:
+#   - teste
+#  cache:
+#    key: "$CI_PROJECT_NAMESPACE-$CI_PROJECT_NAME"
+#    paths:
+#      - .nuget/
+#  script:
+# #   - dotnet restore -s https://api.nuget.org/v3/index.json --packages ./.nuget/
+#    - dotnet restore
+#    - dotnet publish --no-restore -c Release -o "\\fs-lan\AppWeb\dev\dev-sql01\tce-commoncoreapidev_intergration"
