@@ -41,12 +41,12 @@ namespace Application.Controllers
 
             //GetAll Auditorias Operacionais incluindo relação com Anotação e com Tipo Auditoria Operacional e Tipo Situacao Auditoria Operacional
             var retorno = service.GetAll(
-                                         //predicate: p => p.IdSistema ==2,
-                                         //orderBy: o => o.OrderBy(o2 => o2.NomeS;istema),
-                                        //  include: source => source
-                                        // .Include(x => x.TipoSituacaoCluster)
-                                        // .Include(x => x.TipoCluster)
-                                        // .Include(x => x.AreaAtuacao)
+                                    //predicate: p => p.IdSistema ==2,
+                                    //orderBy: o => o.OrderBy(o2 => o2.NomeS;istema),
+                                    //  include: source => source
+                                    // .Include(x => x.TipoSituacaoCluster)
+                                    // .Include(x => x.TipoCluster)
+                                    // .Include(x => x.AreaAtuacao)
                                     //.ThenInclude(s => s.SegPagina)
                                     ).ToList();
             #endregion
@@ -64,7 +64,7 @@ namespace Application.Controllers
             return Ok(retorno);
         }
 
-         /// <summary>
+        /// <summary>
         /// GetAll Openstack Images
         /// </summary>
         /// <response code="200">list returned all Openstack Images</response>
@@ -80,7 +80,7 @@ namespace Application.Controllers
 
             //Exemplos:
             #region : Return using EntityFrameWork (ORM) :
-             var retorno = service.GetAllImages();
+            var retorno = service.GetAllImages();
             #endregion
 
             #region :: Return using DAPPER ::
@@ -95,7 +95,7 @@ namespace Application.Controllers
         }
 
 
-         /// <summary>
+        /// <summary>
         /// GetAll Openstack Flavors
         /// </summary>
         /// <response code="200">list returned all Openstack Flavors</response>
@@ -111,7 +111,7 @@ namespace Application.Controllers
 
             //Exemplos:
             #region : Return using EntityFrameWork (ORM) :
-             var retorno = service.GetAllFlavors();
+            var retorno = service.GetAllFlavors();
             #endregion
 
             #region :: Return using DAPPER ::
@@ -125,7 +125,7 @@ namespace Application.Controllers
             return Ok(retorno.Result);
         }
 
-  /// <summary>
+        /// <summary>
         /// GetAll Openstack Flavors
         /// </summary>
         /// <response code="200">list returned all Openstack Flavors</response>
@@ -141,7 +141,7 @@ namespace Application.Controllers
 
             //Exemplos:
             #region : Return using EntityFrameWork (ORM) :
-             var retorno = service.GetAllServers();
+            var retorno = service.GetAllServers();
             #endregion
 
             #region :: Return using DAPPER ::
@@ -196,9 +196,21 @@ namespace Application.Controllers
         [HttpPost]
         public async Task<IActionResult> CreateAsync([FromServices] ClusterService service, [FromBody] ClusterDTO ClusterDto)
         {
-            var retorno = await service.CreateServer();
-            ClusterDto.IdServer = retorno.Id;
-            ClusterDto.DataCriacao = DateTime.Now;
+
+            try
+            {
+                var retorno = await service.CreateServer(ClusterDto.NomeCluster, ClusterDto.IdImage, ClusterDto.IdFlavor);
+
+                ClusterDto.IdServer = retorno.Id;
+
+                ClusterDto.DataCriacao = DateTime.Now;
+            }
+            catch
+            {
+                return null;
+            }
+
+
             var mapped = Mapper.Map<Cluster>(ClusterDto);
             var result = service.Add<ClusterValidator>(mapped);
             return new ObjectResult(result);

@@ -8,7 +8,6 @@ namespace Application.AutoMapper
         {
             Mapper.Initialize(cfg =>
             {
-                cfg.AddProfile<AuditoriaOperacionalProfile>();
                 cfg.AddProfile<ClusterProfile>();
 
             });
