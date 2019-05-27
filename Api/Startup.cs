@@ -119,6 +119,16 @@ namespace Api
                 client.BaseAddress = new System.Uri(baseURL);
             });
 
+            services.AddHttpClient("NetworkAPI", client =>
+            {
+                client.DefaultRequestHeaders.Accept.Clear();
+                client.DefaultRequestHeaders.Accept.Add(
+                    new MediaTypeWithQualityHeaderValue("application/json"));
+
+                string baseURL = Configuration.GetSection("NetworkAPI:BaseURL").Value;
+                client.BaseAddress = new System.Uri(baseURL);
+            });
+
             ConfigureServices(services);
         }
 

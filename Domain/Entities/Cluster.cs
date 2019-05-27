@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Domain.Entities
-{        
+{
     [Table("cluster")]
     public partial class Cluster
     {
@@ -26,13 +26,17 @@ namespace Domain.Entities
         public string IdImage { get; set; }
         [Column("id_flavor")]
         public string IdFlavor { get; set; }
+        [Column("id_network")]
+        public string IdNetwork { get; set; }
+        [Column("floating_ip")]
+        public string FloatingIP { get; set; }
         // [Column("ipv4")]
         // public string Ipv4 { get; set; }
         [Column("nome_cluster")]
         public string NomeCluster { get; set; }
         [Column("data_criacao")]
         public DateTime DataCriacao { get; set; }
-        
+
         #endregion
 
 

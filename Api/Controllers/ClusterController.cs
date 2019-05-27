@@ -156,6 +156,37 @@ namespace Application.Controllers
         }
 
         /// <summary>
+        /// GetAll Openstack Networks
+        /// </summary>
+        /// <response code="200">list returned all Openstack Networks</response>
+        /// <response code="301">moved permanently</response>
+        /// <response code="304">not modified</response>
+        /// <response code="400">incorrect request</response>
+        /// <response code="401">not authorized</response>
+        /// <response code="404">resource not found</response>
+        /// <response code="500">internal error server</response>
+        [HttpGet("GetAllNetworks")]
+        public IActionResult GetAllNetworks([FromServices] ClusterService service)
+        {
+
+            //Exemplos:
+            #region : Return using EntityFrameWork (ORM) :
+            var retorno = service.GetAllNetworks();
+            #endregion
+
+            #region :: Return using DAPPER ::
+            //string sql = "select * from Sistema";
+
+            //var retorno = service.Query(sql).ToList();
+            #endregion
+
+            //Retornos vazios são NotFound
+
+            return Ok(retorno.Result);
+        }
+
+
+        /// <summary>
         /// Get auditoria operacional By Id
         /// </summary>
         /// <param name="service"></param>
@@ -199,10 +230,20 @@ namespace Application.Controllers
 
             try
             {
-                var retorno = await service.CreateServer(ClusterDto.NomeCluster, ClusterDto.IdImage, ClusterDto.IdFlavor);
+                var retornoNetwork = await service.CreateNetwork(ClusterDto.NomeCluster);
+                var retornoSubnet = await service.CreateSubnet(retornoNetwork.Id, ClusterDto.NomeCluster);
+                var retornoRouter = await service.CreateRouter(ClusterDto.NomeCluster);
+                var retornoInterface = await service.AddRouterInterface(retornoSubnet.Id, retornoRouter.Id);
+
+                var retorno = await service.CreateServer(ClusterDto.NomeCluster, ClusterDto.IdImage, ClusterDto.IdFlavor, retornoNetwork.Id);
 
                 ClusterDto.IdServer = retorno.Id;
+                ClusterDto.IdNetwork = retornoNetwork.Id;
 
+                var interfacePort = await service.GetAllServerInterfaces(retorno.Id);
+                
+                var floatingIp = await service.AssociateFloatingIp("78c9ed54-cca8-4f1b-837d-b15c185cce17", interfacePort[0].PortId);
+                ClusterDto.FloatingIP = floatingIp.FloatingIpAddress;
                 ClusterDto.DataCriacao = DateTime.Now;
             }
             catch

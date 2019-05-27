@@ -199,6 +199,81 @@ namespace Services._BaseService
             return retorno;
         }
 
+        public async Task<A> HttpClientGetNetworkApi<A>(IConfiguration configuration, string endPoint, string property)
+        {
+            var client = _httpClientFactory.CreateClient("NetworkAPI");
+
+            client.DefaultRequestHeaders.TryAddWithoutValidation("X-Auth-Token", await GetOpenstackToken(configuration));
+
+            var response = await client.GetAsync(client.BaseAddress + endPoint);
+            response.EnsureSuccessStatusCode();
+            string conteudo = response.Content.ReadAsStringAsync().Result;
+
+            var parsedObject = JObject.Parse(conteudo);
+            var popupJson = parsedObject[property].ToString();
+
+            var jsonSerializerSettings = new JsonSerializerSettings();
+            jsonSerializerSettings.MissingMemberHandling = MissingMemberHandling.Ignore;
+            A Result = JsonConvert.DeserializeObject<A>(popupJson, jsonSerializerSettings);
+
+            return Result;
+        }
+
+        public async Task<A> HttpClientPostNetworkApi<A>(IConfiguration configuration, string endPoint, string propertyReturn, NeutronDTO payload)
+        {
+            var client = _httpClientFactory.CreateClient("NetworkAPI");
+            client.DefaultRequestHeaders.TryAddWithoutValidation("X-Auth-Token", await GetOpenstackToken(configuration));
+
+            var jsonSerializerSettings = new JsonSerializerSettings();
+            jsonSerializerSettings.MissingMemberHandling = MissingMemberHandling.Ignore;
+            var stringPayload = await Task.Run(() => JsonConvert.SerializeObject(payload, new JsonSerializerSettings
+            {
+                NullValueHandling = NullValueHandling.Ignore
+            }));
+            var httpContent = new StringContent(stringPayload, Encoding.UTF8, "application/json");
+            httpContent.Headers.ContentLength = stringPayload.Length;
+
+            var response = await client.PostAsync(client.BaseAddress + endPoint, httpContent);
+            response.EnsureSuccessStatusCode();
+            string conteudo = JObject.Parse(response.Content.ReadAsStringAsync().Result).ToString();
+
+            var parsedObject = JObject.Parse(conteudo);
+            conteudo = parsedObject[propertyReturn].ToString();
+
+            A retorno = JsonConvert.DeserializeObject<A>(conteudo, jsonSerializerSettings);
+
+            return retorno;
+        }
+
+        public async Task<A> HttpClientPutInterfaceNetworkApi<A>(IConfiguration configuration, string endPoint, string propertyReturn, InterfaceDTO payload)
+        {
+            var client = _httpClientFactory.CreateClient("NetworkAPI");
+            client.DefaultRequestHeaders.TryAddWithoutValidation("X-Auth-Token", await GetOpenstackToken(configuration));
+
+            var jsonSerializerSettings = new JsonSerializerSettings();
+            jsonSerializerSettings.MissingMemberHandling = MissingMemberHandling.Ignore;
+            var stringPayload = await Task.Run(() => JsonConvert.SerializeObject(payload, new JsonSerializerSettings
+            {
+                NullValueHandling = NullValueHandling.Ignore
+            }));
+
+           
+
+            var httpContent = new StringContent(stringPayload, Encoding.UTF8, "application/json");
+            httpContent.Headers.ContentLength = stringPayload.Length;
+
+
+
+            var response = await client.PutAsync(client.BaseAddress + endPoint, httpContent);
+            response.EnsureSuccessStatusCode();
+            string conteudo = JObject.Parse(response.Content.ReadAsStringAsync().Result).ToString();
+
+            A retorno = JsonConvert.DeserializeObject<A>(conteudo, jsonSerializerSettings);
+
+            return retorno;
+        }
+
+
         public async Task<String> GetOpenstackToken(IConfiguration configuration)
         {
             var clientToken = _httpClientFactory.CreateClient("IdentityAPI");

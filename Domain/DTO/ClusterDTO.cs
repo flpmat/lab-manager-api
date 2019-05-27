@@ -12,7 +12,8 @@ namespace Domain.DTO
         public string IdImage { get; set; }
         public string NomeCluster { get; set; }
         public DateTime DataCriacao { get; set; }
-
+        public string IdNetwork { get; set; }
+        public string FloatingIP { get; set; }
         #endregion
 
     }
