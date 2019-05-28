@@ -45,6 +45,12 @@ namespace Services
 
             return servers;
         }
+        public async Task<ServerDTO> GetServer(string idServer)
+        {
+            var server = await HttpClientGetComputeApi<ServerDTO>(_configuration, "servers/" + idServer, "server");
+
+            return server;
+        }
         public async Task<NetworkDTO[]> GetAllNetworks()
         {
             var networks = await HttpClientGetComputeApi<NetworkDTO[]>(_configuration, "networks", "networks");
@@ -117,7 +123,12 @@ namespace Services
             {
                 Router = new RouterDTO
                 {
-                    Name = "EXTERNAL_ROUTER_" + name
+                    Name = "EXTERNAL_ROUTER_" + name,
+                    ExternalGatewayInfo = new ExternalGatewayDTO
+                    {
+                        NetworkId = "78c9ed54-cca8-4f1b-837d-b15c185cce17",
+                        EnableSnat = true
+                    }
                 }
             };
 
@@ -135,11 +146,11 @@ namespace Services
 
             var result = await HttpClientPutInterfaceNetworkApi<InterfaceDTO>(_configuration, "routers/" + routerId + "/add_router_interface", "id", payload);
 
-            var payloadExternal = new InterfaceDTO
-            {
-                SubnetId = "5071db6d-4e9b-4d51-bc71-4e741f99db4f"
-            };
-            await HttpClientPutInterfaceNetworkApi<InterfaceDTO>(_configuration, "routers/" + routerId + "/add_router_interface", "id", payloadExternal);
+            // var payloadExternal = new InterfaceDTO
+            // {
+            //     SubnetId = "5071db6d-4e9b-4d51-bc71-4e741f99db4f"
+            // };
+            // await HttpClientPutInterfaceNetworkApi<InterfaceDTO>(_configuration, "routers/" + routerId + "/add_router_interface", "id", payloadExternal);
 
             return result;
         }
@@ -159,6 +170,69 @@ namespace Services
             var result = await HttpClientPostNetworkApi<FloatingIpDTO>(_configuration, "floatingips", "floatingip", payload);
             return result;
         }
+
+        public async Task<ActionDTO> RebootServer(string idServer)
+        {
+
+            var payload = new ActionDTO
+            {
+                Reboot = null
+            };
+
+            var action = await HttpClientPostActionComputeApi<ActionDTO>(_configuration, "servers/" + idServer + "/action", "reboot", payload);
+
+            return action;
+        }
+        public async Task<ActionDTO> StartServer(string idServer)
+        {
+
+            var payload = new ActionDTO
+            {
+                OsStart = null
+            };
+
+            var action = await HttpClientPostActionComputeApi<ActionDTO>(_configuration, "servers/" + idServer + "/action", "os-start", payload);
+
+            return action;
+        }
+        public async Task<ActionDTO> StopServer(string idServer)
+        {
+
+            var payload = new ActionDTO
+            {
+                OsStop = null
+            };
+
+            var action = await HttpClientPostActionComputeApi<ActionDTO>(_configuration, "servers/" + idServer + "/action", "os-stop", payload);
+
+            return action;
+        }
+        public async Task<ActionDTO> PauseServer(string idServer)
+        {
+
+            var payload = new ActionDTO
+            {
+                Pause = null
+            };
+
+            var action = await HttpClientPostActionComputeApi<ActionDTO>(_configuration, "servers/" + idServer + "/action", "pause", payload);
+
+            return action;
+        }
+
+        public async Task<ActionDTO> UnpauseServer(string idServer)
+        {
+
+            var payload = new ActionDTO
+            {
+                Unpause = null
+            };
+
+            var action = await HttpClientPostActionComputeApi<ActionDTO>(_configuration, "servers/" + idServer + "/action", "unpause", payload);
+
+            return action;
+        }
+
 
 
     }

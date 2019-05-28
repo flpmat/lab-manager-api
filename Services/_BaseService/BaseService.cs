@@ -194,6 +194,35 @@ namespace Services._BaseService
             response.EnsureSuccessStatusCode();
             string conteudo = JObject.Parse(response.Content.ReadAsStringAsync().Result).ToString();
 
+            var parsedObject = JObject.Parse(conteudo);
+            conteudo = parsedObject[propertyReturn].ToString();
+
+            A retorno = JsonConvert.DeserializeObject<A>(conteudo, jsonSerializerSettings);
+
+            return retorno;
+        }
+
+        public async Task<A> HttpClientPostActionComputeApi<A>(IConfiguration configuration, string endPoint, string propertyReturn, ActionDTO payload)
+        {
+            var client = _httpClientFactory.CreateClient("ComputeAPI");
+            client.DefaultRequestHeaders.TryAddWithoutValidation("X-Auth-Token", await GetOpenstackToken(configuration));
+
+            var jsonSerializerSettings = new JsonSerializerSettings();
+            jsonSerializerSettings.MissingMemberHandling = MissingMemberHandling.Ignore;
+            var stringPayload = await Task.Run(() => JsonConvert.SerializeObject(payload, new JsonSerializerSettings
+            {
+                NullValueHandling = NullValueHandling.Ignore
+            }));
+            var httpContent = new StringContent(stringPayload, Encoding.UTF8, "application/json");
+            httpContent.Headers.ContentLength = stringPayload.Length;
+
+            var response = await client.PostAsync(client.BaseAddress + endPoint, httpContent);
+            response.EnsureSuccessStatusCode();
+            string conteudo = JObject.Parse(response.Content.ReadAsStringAsync().Result).ToString();
+
+            var parsedObject = JObject.Parse(conteudo);
+            conteudo = parsedObject[propertyReturn].ToString();
+
             A retorno = JsonConvert.DeserializeObject<A>(conteudo, jsonSerializerSettings);
 
             return retorno;
@@ -257,7 +286,7 @@ namespace Services._BaseService
                 NullValueHandling = NullValueHandling.Ignore
             }));
 
-           
+
 
             var httpContent = new StringContent(stringPayload, Encoding.UTF8, "application/json");
             httpContent.Headers.ContentLength = stringPayload.Length;

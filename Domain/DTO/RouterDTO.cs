@@ -11,7 +11,8 @@ namespace Domain.DTO
         public string Id { get; set; }
         [JsonProperty("name")]
         public string Name { get; set; }
-
+        [JsonProperty("external_gateway_info")]
+        public ExternalGatewayDTO ExternalGatewayInfo { get; set; }
         #endregion
 
     }

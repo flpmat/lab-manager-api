@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using Domain.DTO;
 
 namespace Domain.Entities
 {
@@ -39,6 +40,8 @@ namespace Domain.Entities
 
         #endregion
 
+        [NotMapped]
+        public ServerDTO Server { get; set; }
 
         #region Generated Relationships
 

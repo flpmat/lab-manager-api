@@ -33,7 +33,7 @@ namespace Application.Controllers
         /// <response code="404">resource not found</response>
         /// <response code="500">internal error server</response>
         [HttpGet("")]
-        public IActionResult GetAll([FromServices] ClusterService service)
+        public async Task<IActionResult> GetAll([FromServices] ClusterService service)
         {
 
             //Exemplos:
@@ -50,6 +50,11 @@ namespace Application.Controllers
                                     //.ThenInclude(s => s.SegPagina)
                                     ).ToList();
             #endregion
+
+            foreach (var item in retorno)
+            {
+                item.Server = await service.GetServer(item.IdServer);
+            }
 
             #region :: Return using DAPPER ::
             //string sql = "select * from Sistema";
@@ -167,6 +172,36 @@ namespace Application.Controllers
         /// <response code="500">internal error server</response>
         [HttpGet("GetAllNetworks")]
         public IActionResult GetAllNetworks([FromServices] ClusterService service)
+        {
+
+            //Exemplos:
+            #region : Return using EntityFrameWork (ORM) :
+            var retorno = service.GetAllNetworks();
+            #endregion
+
+            #region :: Return using DAPPER ::
+            //string sql = "select * from Sistema";
+
+            //var retorno = service.Query(sql).ToList();
+            #endregion
+
+            //Retornos vazios são NotFound
+
+            return Ok(retorno.Result);
+        }
+
+              /// <summary>
+        /// GetAll Openstack Networks
+        /// </summary>
+        /// <response code="200">list returned all Openstack Networks</response>
+        /// <response code="301">moved permanently</response>
+        /// <response code="304">not modified</response>
+        /// <response code="400">incorrect request</response>
+        /// <response code="401">not authorized</response>
+        /// <response code="404">resource not found</response>
+        /// <response code="500">internal error server</response>
+        [HttpGet("GetAllNetworks")]
+        public IActionResult RebootServer([FromServices] ClusterService service)
         {
 
             //Exemplos:
