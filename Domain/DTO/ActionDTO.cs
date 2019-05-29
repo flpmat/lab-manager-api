@@ -12,7 +12,7 @@ namespace Domain.DTO
         [JsonProperty("os-stop")]
         public int? OsStop { get; set; }
         [JsonProperty("reboot")]
-        public int? Reboot { get; set; }
+        public RebootDTO Reboot { get; set; }
         [JsonProperty("pause")]
         public int? Pause { get; set; }
         [JsonProperty("unpause")]

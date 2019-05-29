@@ -30,8 +30,23 @@ namespace Domain.DTO
         [JsonProperty("status")]
         public string Status { get; set; }
 
-        // public string PowerState { get; set; }
-        // public string VmState { get; set; }
+        [JsonProperty("OS-EXT-STS:power_state")]
+        public int? OsPowerState
+        {
+            set { PowerState = value; }
+        }
+        [JsonProperty("power_state")]
+        public int? PowerState { get; set; }
+        [JsonProperty("progress")]
+        public int? Progress { get; set; }
+
+        [JsonProperty("OS-EXT-STS:task_state")]
+        public string OsTaskState
+        {
+            set { TaskState = value; }
+        }
+        [JsonProperty("task_state")]
+        public string TaskState { get; set; }
 
         #endregion
 

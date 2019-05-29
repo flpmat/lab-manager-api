@@ -218,14 +218,20 @@ namespace Services._BaseService
 
             var response = await client.PostAsync(client.BaseAddress + endPoint, httpContent);
             response.EnsureSuccessStatusCode();
-            string conteudo = JObject.Parse(response.Content.ReadAsStringAsync().Result).ToString();
 
-            var parsedObject = JObject.Parse(conteudo);
-            conteudo = parsedObject[propertyReturn].ToString();
+            if (response.StatusCode != System.Net.HttpStatusCode.Accepted)
+            {
+                string conteudo = JObject.Parse(response.Content.ReadAsStringAsync().Result).ToString();
 
-            A retorno = JsonConvert.DeserializeObject<A>(conteudo, jsonSerializerSettings);
+                var parsedObject = JObject.Parse(conteudo);
+                conteudo = parsedObject[propertyReturn].ToString();
 
-            return retorno;
+                A retorno = JsonConvert.DeserializeObject<A>(conteudo, jsonSerializerSettings);
+                
+                return retorno;
+
+            }
+            return default(A);
         }
 
         public async Task<A> HttpClientGetNetworkApi<A>(IConfiguration configuration, string endPoint, string property)

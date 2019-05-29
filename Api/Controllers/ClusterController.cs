@@ -190,8 +190,8 @@ namespace Application.Controllers
             return Ok(retorno.Result);
         }
 
-              /// <summary>
-        /// GetAll Openstack Networks
+        /// <summary>
+        /// Reboot Openstack Server
         /// </summary>
         /// <response code="200">list returned all Openstack Networks</response>
         /// <response code="301">moved permanently</response>
@@ -200,13 +200,13 @@ namespace Application.Controllers
         /// <response code="401">not authorized</response>
         /// <response code="404">resource not found</response>
         /// <response code="500">internal error server</response>
-        [HttpGet("GetAllNetworks")]
-        public IActionResult RebootServer([FromServices] ClusterService service)
+        [HttpGet("RebootServer/{idServer}")]
+        public async Task<IActionResult> RebootServer([FromServices] ClusterService service, string idServer)
         {
 
             //Exemplos:
             #region : Return using EntityFrameWork (ORM) :
-            var retorno = service.GetAllNetworks();
+            var retorno = await service.RebootServer(idServer);
             #endregion
 
             #region :: Return using DAPPER ::
@@ -217,7 +217,67 @@ namespace Application.Controllers
 
             //Retornos vazios são NotFound
 
-            return Ok(retorno.Result);
+            return Ok(retorno);
+        }
+
+        /// <summary>
+        /// Start Openstack Server
+        /// </summary>
+        /// <response code="200">list returned all Openstack Networks</response>
+        /// <response code="301">moved permanently</response>
+        /// <response code="304">not modified</response>
+        /// <response code="400">incorrect request</response>
+        /// <response code="401">not authorized</response>
+        /// <response code="404">resource not found</response>
+        /// <response code="500">internal error server</response>
+        [HttpGet("StartServer/{idServer}")]
+        public async Task<IActionResult> StartServer([FromServices] ClusterService service, string idServer)
+        {
+
+            //Exemplos:
+            #region : Return using EntityFrameWork (ORM) :
+            var retorno = await service.StartServer(idServer);
+            #endregion
+
+            #region :: Return using DAPPER ::
+            //string sql = "select * from Sistema";
+
+            //var retorno = service.Query(sql).ToList();
+            #endregion
+
+            //Retornos vazios são NotFound
+
+            return Ok(retorno);
+        }
+
+        /// <summary>
+        /// Stop Openstack Server
+        /// </summary>
+        /// <response code="200">list returned all Openstack Networks</response>
+        /// <response code="301">moved permanently</response>
+        /// <response code="304">not modified</response>
+        /// <response code="400">incorrect request</response>
+        /// <response code="401">not authorized</response>
+        /// <response code="404">resource not found</response>
+        /// <response code="500">internal error server</response>
+        [HttpGet("StopServer/{idServer}")]
+        public async Task<IActionResult> StopServer([FromServices] ClusterService service, string idServer)
+        {
+
+            //Exemplos:
+            #region : Return using EntityFrameWork (ORM) :
+            var retorno = await service.StopServer(idServer);
+            #endregion
+
+            #region :: Return using DAPPER ::
+            //string sql = "select * from Sistema";
+
+            //var retorno = service.Query(sql).ToList();
+            #endregion
+
+            //Retornos vazios são NotFound
+
+            return Ok(retorno);
         }
 
 
@@ -276,7 +336,7 @@ namespace Application.Controllers
                 ClusterDto.IdNetwork = retornoNetwork.Id;
 
                 var interfacePort = await service.GetAllServerInterfaces(retorno.Id);
-                
+
                 var floatingIp = await service.AssociateFloatingIp("78c9ed54-cca8-4f1b-837d-b15c185cce17", interfacePort[0].PortId);
                 ClusterDto.FloatingIP = floatingIp.FloatingIpAddress;
                 ClusterDto.DataCriacao = DateTime.Now;

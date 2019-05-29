@@ -171,48 +171,57 @@ namespace Services
             return result;
         }
 
-        public async Task<ActionDTO> RebootServer(string idServer)
+        public async Task<ServerDTO> RebootServer(string idServer)
         {
 
             var payload = new ActionDTO
             {
-                Reboot = null
+                Reboot = new RebootDTO
+                {
+                    Type = "HARD"
+                }
             };
 
             var action = await HttpClientPostActionComputeApi<ActionDTO>(_configuration, "servers/" + idServer + "/action", "reboot", payload);
 
-            return action;
+            var server = await HttpClientGetComputeApi<ServerDTO>(_configuration, "servers/" + idServer, "server");
+
+            return server;
         }
-        public async Task<ActionDTO> StartServer(string idServer)
+        public async Task<ServerDTO> StartServer(string idServer)
         {
 
             var payload = new ActionDTO
             {
-                OsStart = null
+                OsStart = 1
             };
 
             var action = await HttpClientPostActionComputeApi<ActionDTO>(_configuration, "servers/" + idServer + "/action", "os-start", payload);
 
-            return action;
+            var server = await HttpClientGetComputeApi<ServerDTO>(_configuration, "servers/" + idServer, "server");
+
+            return server;
         }
-        public async Task<ActionDTO> StopServer(string idServer)
+        public async Task<ServerDTO> StopServer(string idServer)
         {
 
             var payload = new ActionDTO
             {
-                OsStop = null
+                OsStop = 1
             };
 
             var action = await HttpClientPostActionComputeApi<ActionDTO>(_configuration, "servers/" + idServer + "/action", "os-stop", payload);
+           
+            var server = await HttpClientGetComputeApi<ServerDTO>(_configuration, "servers/" + idServer, "server");
 
-            return action;
+            return server;
         }
         public async Task<ActionDTO> PauseServer(string idServer)
         {
 
             var payload = new ActionDTO
             {
-                Pause = null
+                Pause = 1
             };
 
             var action = await HttpClientPostActionComputeApi<ActionDTO>(_configuration, "servers/" + idServer + "/action", "pause", payload);
@@ -225,7 +234,7 @@ namespace Services
 
             var payload = new ActionDTO
             {
-                Unpause = null
+                Unpause = 1
             };
 
             var action = await HttpClientPostActionComputeApi<ActionDTO>(_configuration, "servers/" + idServer + "/action", "unpause", payload);
